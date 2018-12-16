@@ -7,30 +7,47 @@ const axios = require('axios');
 //     return rate;
 //   });
 // };
+const periodo = '2010-01-01';
 
 const taxaConversao = async (from, to) => {
-  const res = await axios.get('http://data.fixer.io/api/latest?access_key=85ec9ef5f2a0314746001157d4bca4e8');
-  const euro = 1 / res.data.rates[from];
-  const rate = euro * res.data.rates[to];
+  try {
+    const res = await axios.get(`http://data.fixer.io/api/${periodo}?access_key=85ec9ef5f2a0314746001157d4bca4e8`);
+    const euro = 1 / res.data.rates[from];
+    const rate = euro * res.data.rates[to];
 
-  return rate;
+    if (isNaN(rate)) {
+      throw new Error();
+    }
+
+    return rate;
+  } catch (e) {
+    throw new Error(`${e} Estamos com problema para converter ${from} para ${to}.`);
+  }
 };
 
 const buscaPaises = async (codigoPais) => {
-  const res = await axios.get(`https://restcountries.eu/rest/v2/currency/${codigoPais}`);
-  const name = res.data.map(pais => pais.name);
+  try {
+    const res = await axios.get(`https://restcountries.eu/rest/v2/currency/${codigoPais}`);
+    const name = res.data.map(pais => pais.name);
 
-  return name;
-}
+    return name
+  } catch (e) {
+    throw new Error(`${e} Servidor com problemas para encontrar o país relativo ao código ${codigoPais}.`);
+  }
+};
 
 const conversorMoedas = async (from, to, quantia) => {
-  const taxa = await taxaConversao(from, to);
-  const quantiaConvertida = (taxa * quantia).toFixed(2);
-  const paisOrigem = await buscaPaises(from);
-  const paisDestino = await buscaPaises(to);
+  try {
+    const taxa = await taxaConversao(from, to);
+    const quantiaConvertida = (taxa * quantia).toFixed(2);
+    const paisOrigem = await buscaPaises(from);
+    const paisDestino = await buscaPaises(to);
 
-  return `${quantia} ${from}, moeda do ${paisOrigem.join(', ')}, estão valendo ${quantiaConvertida} ${to}, que é a moeda aceita nos seguintes países: ${paisDestino.join(', ')}.`;
-}
+    return `Em ${periodo}, a quantia de ${quantia} ${from}, moeda do ${paisOrigem.join(', ')}, estão valendo ${quantiaConvertida} ${to}, que é a moeda aceita nos seguintes países: ${paisDestino.join(', ')}.`;
+  } catch (e) {
+    throw new Error(`${e} - Problemas na conversão final.`);
+  }
+};
 
 // taxaConversao('USD', 'BRL').then(rate => {
 //   console.log(`Um dólar custa atualmente R$${rate.toFixed(2)}.`)
@@ -40,6 +57,6 @@ const conversorMoedas = async (from, to, quantia) => {
 //   console.log('busca pais', nome)
 // })
 
-conversorMoedas('AED', 'BRL', 10).then(res => {
+conversorMoedas('BRL', 'ARS', 10).then(res => {
   console.log(res);
-})
+});
