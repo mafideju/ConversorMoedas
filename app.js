@@ -19,13 +19,27 @@ const taxaConversao = async (from, to) => {
 const buscaPaises = async (codigoPais) => {
   const res = await axios.get(`https://restcountries.eu/rest/v2/currency/${codigoPais}`);
   const name = res.data.map(pais => pais.name);
+
   return name;
 }
 
-taxaConversao('USD', 'BRL').then(rate => {
-  console.log(`Um dólar custa atualmente R$${rate.toFixed(2)}.`)
-});
+const conversorMoedas = async (from, to, quantia) => {
+  const taxa = await taxaConversao(from, to);
+  const quantiaConvertida = (taxa * quantia).toFixed(2);
+  const paisOrigem = await buscaPaises(from);
+  const paisDestino = await buscaPaises(to);
 
-buscaPaises('BRL').then(nome => {
-  console.log(nome)
+  return `${quantia} ${from}, moeda do ${paisOrigem.join(', ')}, estão valendo ${quantiaConvertida} ${to}, que é a moeda aceita nos seguintes países: ${paisDestino.join(', ')}.`;
+}
+
+// taxaConversao('USD', 'BRL').then(rate => {
+//   console.log(`Um dólar custa atualmente R$${rate.toFixed(2)}.`)
+// });
+
+// buscaPaises('BRL').then(nome => {
+//   console.log('busca pais', nome)
+// })
+
+conversorMoedas('AED', 'BRL', 10).then(res => {
+  console.log(res);
 })
