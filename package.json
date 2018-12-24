@@ -1,0 +1,29 @@
+{
+  "name": "60-conversormoedas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/mafideju/ConversorMoedas.git"
+  },
+  "keywords": [
+    "Node",
+    "API",
+    "Fixer",
+    "RestCountries",
+    "Async/Await"
+  ],
+  "author": "Marcio Mafideju Rodrigues",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mafideju/ConversorMoedas/issues"
+  },
+  "homepage": "https://github.com/mafideju/ConversorMoedas#readme",
+  "dependencies": {
+    "axios": "^0.18.0"
+  }
+}
